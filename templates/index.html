@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePlus | Hospital Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50">
+
+    <header class="bg-white border-b border-slate-100 px-8 py-4 flex justify-between items-center fixed top-0 left-0 right-0 z-40 h-20">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center shadow-md">
+                <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+            </div>
+            <div>
+                <span class="text-lg font-bold tracking-tight text-slate-900 block">CarePlus Suite</span>
+                <span class="text-xs text-slate-400 font-medium block">Clinical Command Center v2.6</span>
+            </div>
+        </div>
+        
+        {% if session.get('user_id') %}
+        <div class="flex items-center space-x-6">
+            <div class="text-right hidden md:block">
+                <span class="text-sm font-semibold text-slate-800 block">{{ session.get('name') }}</span>
+                <span class="text-xs text-slate-400 font-medium uppercase tracking-wider block">{{ session.get('role') }}</span>
+            </div>
+            <span class="status-pill status-pill-teal">
+                <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span> Terminal Connected
+            </span>
+            <a href="/logout" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition duration-200">
+                <i class="fa-solid fa-power-off mr-1.5"></i>Disconnect
+            </a>
+        </div>
+        {% endif %}
+    </header>
+
+    <div class="h-20"></div>
+
+    <div class="flex flex-1">
+        
+        {% if session.get('user_id') %}
+        <aside class="w-64 premium-sidebar hidden lg:flex flex-col justify-between p-6 fixed top-20 bottom-0 left-0 z-30">
+            <div class="space-y-8">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3">Main Navigation</span>
+                    <nav class="space-y-1.5">
+                        <a href="/?view=dashboard" class="flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition {% if current_view == 'dashboard' or not current_view %} bg-teal-50 text-teal-700 {% else %} text-slate-600 hover:bg-slate-50 hover:text-slate-900 {% endif %}">
+                            <i class="fa-solid fa-chart-pie text-base"></i>
+                            <span>Dashboard Matrix</span>
+                        </a>
+                        
+                        {% if session.get('role') == 'Admin' %}
+                        <a href="/?view=roster" class="flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition {% if current_view == 'roster' %} bg-teal-50 text-teal-700 {% else %} text-slate-600 hover:bg-slate-50 hover:text-slate-900 {% endif %}">
+                            <i class="fa-solid fa-user-doctor text-base"></i>
+                            <span>Physicians Roster</span>
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div class="flex items-center space-x-3">
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                    <span class="text-xs font-semibold text-slate-600">Database Live</span>
+                </div>
+            </div>
+        </aside>
+        <div class="w-64 hidden lg:block"></div> 
+        {% endif %}
+
+        <main class="flex-grow p-8 min-w-0">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, msg in messages %}
+                    <div class="p-4 mb-6 rounded-xl border flex items-center space-x-3 text-sm {% if category == 'danger' %} bg-rose-50 border-rose-100 text-rose-800 {% else %} bg-emerald-50 border-emerald-100 text-emerald-800 {% endif %} shadow-sm">
+                        <i class="fa-solid {% if category == 'danger' %}fa-triangle-exclamation{% else %}fa-circle-check{% endif %} text-base"></i>
+                        <span class="font-medium">{{ msg }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if not session.get('user_id') %}
+            <div class="max-w-md mx-auto mt-16 bg-white p-10 rounded-2xl shadow-xl border border-slate-100/80">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-950">Secure Single Sign-On</h2>
+                    <p class="text-slate-400 text-xs mt-1.5 font-medium">Authorized Clinical Personnel Only</p>
+                </div>
+                
+                <form method="POST" action="/login" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Work Email</label>
+                        <input type="email" name="email" required placeholder="admin@hospital.com" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Security Phrase</label>
+                        <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50">
+                    </div>
+                    <button type="submit" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-md text-sm mt-2">
+                        Initialize Session
+                    </button>
+                </form>
+            </div>
+
+            {% elif session.get('role') == 'Admin' %}
+            <div class="space-y-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                            {% if current_view == 'roster' %} Medical Staff Registry {% else %} Administrative Overview {% endif %}
+                        </h1>
+                        <p class="text-xs text-slate-400 font-medium mt-0.5">Core control unit center panel.</p>
+                    </div>
+                    <button type="button" onclick="openDoctorModal()" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-md transition flex items-center z-10">
+                        <i class="fa-solid fa-user-plus mr-2"></i>Provision Doctor Account
+                    </button>
+                </div>
+
+                {% if current_view == 'dashboard' or not current_view %}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="hms-card p-6 flex items-center justify-between bg-white border border-slate-100 rounded-2xl shadow-sm">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Credentialed Doctors</span>
+                            <span class="text-3xl font-bold text-slate-900 block mt-1">{{ stats.doctors }}</span>
+                        </div>
+                        <div class="w-12 h-12 bg-teal-50 text-teal-700 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-user-md"></i></div>
+                    </div>
+                    <div class="hms-card p-6 flex items-center justify-between bg-white border border-slate-100 rounded-2xl shadow-sm">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Registered Patients</span>
+                            <span class="text-3xl font-bold text-slate-900 block mt-1">{{ stats.patients }}</span>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-wheelchair"></i></div>
+                    </div>
+                    <div class="hms-card p-6 flex items-center justify-between bg-white border border-slate-100 rounded-2xl shadow-sm">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Encounters Completed</span>
+                            <span class="text-3xl font-bold text-slate-900 block mt-1">{{ stats.appointments }}</span>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-50 text-amber-700 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-file-invoice"></i></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="bg-white rounded-2xl border border-slate-100/80 shadow-sm overflow-hidden">
+                    <div class="px-6 py-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Clinical Staff List</span>
+                        <span class="status-pill status-pill-teal text-[10px]">Secure Core Synchronized</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50/70 border-b border-slate-100 text-slate-500 font-bold">
+                                    <th class="p-4">Practitioner Name</th>
+                                    <th class="p-4">Specialty Department</th>
+                                    <th class="p-4">System Mail Token</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                {% for doc in doctors_list %}
+                                <tr class="hover:bg-slate-50/50 transition">
+                                    <td class="p-4 font-semibold text-slate-900">{{ doc.name }}</td>
+                                    <td class="p-4"><span class="px-2.5 py-1 bg-purple-50 text-purple-700 rounded-lg font-semibold text-xs border border-purple-100">{{ doc.department or "General Medicine" }}</span></td>
+                                    <td class="p-4 text-slate-400 font-mono text-xs">{{ doc.email }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-slate-400 py-10 font-medium">No system personnel doctors registered found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% elif session.get('role') == 'Doctor' %}
+            <div class="space-y-8">
+                <div class="bg-gradient-to-br from-slate-900 to-teal-950 text-white p-8 rounded-2xl shadow-md flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">Physician Portal Workspace</h1>
+                        <p class="text-teal-200/70 text-xs font-medium mt-1">Accessing real-time Electronic Health Records (EHR).</p>
+                    </div>
+                    <button type="button" onclick="openPatientModal()" class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold px-4 py-3 rounded-xl transition flex items-center shadow-md">
+                        <i class="fa-solid fa-circle-plus mr-2"></i>Add New Outpatient Log
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-4 shadow-sm">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-3">Active Consultation Queue</h3>
+                        <div class="space-y-3">
+                            {% for appt in appointments %}
+                            <div class="flex justify-between items-center p-5 bg-slate-50/50 rounded-xl border border-slate-100 hover:border-teal-200/50 transition">
+                                <div>
+                                    <h4 class="font-semibold text-slate-900 text-sm">{{ appt.patient_name }}</h4>
+                                    <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1">
+                                        <span><i class="fa-regular fa-clock mr-1 text-teal-600"></i>{{ appt.time }}</span>
+                                        <span>•</span>
+                                        <span class="text-slate-600">Indication: {{ appt.reason }}</span>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="openEhrModal('{{ appt.patient_name }}', '{{ appt.time }}', '{{ appt.reason }}')" class="bg-white hover:bg-teal-50 border border-slate-200 text-teal-700 text-xs font-bold px-4 py-2 rounded-lg transition">
+                                    Open EHR Chart
+                                </button>
+                            </div>
+                            {% else %}
+                            <p class="text-slate-400 text-xs text-center py-8 font-medium">No patient log tracks inside the consultation matrix queue buffer.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <div id="doctorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" style="z-index: 9999;">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <h3 class="text-lg font-bold text-slate-900">Provision Doctor Profile</h3>
+                <button type="button" onclick="closeDoctorModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form action="/admin/add-doctor" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Doctor Full Name</label>
+                    <input type="text" name="name" required placeholder="Dr. Muhammad Ali" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Corporate Work Email</label>
+                    <input type="email" name="email" required placeholder="doctor@hospital.com" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Secure Password Code</label>
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Specialty Department</label>
+                    <input type="text" name="department" required placeholder="Cardiology" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeDoctorModal()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-3 rounded-xl text-xs uppercase transition">Cancel</button>
+                    <button type="submit" class="w-2/3 bg-teal-700 hover:bg-teal-800 text-white font-semibold py-3 rounded-xl text-xs uppercase shadow-md transition">Register Doctor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="patientModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" style="z-index: 9999;">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <h3 class="text-lg font-bold text-slate-900">Create Patient Log Chart</h3>
+                <button type="button" onclick="closePatientModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form action="/doctor/add-patient" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Patient Name</label>
+                    <input type="text" name="patient_name" required placeholder="Zain Malik" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Consultation Time Clock</label>
+                    <input type="text" name="time" required placeholder="04:30 PM" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Clinical Indication Reason</label>
+                    <input type="text" name="reason" required placeholder="Chronic Migraine Evaluation" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-500 bg-slate-50 text-slate-900">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closePatientModal()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-3 rounded-xl text-xs uppercase transition">Cancel</button>
+                    <button type="submit" class="w-2/3 bg-teal-700 hover:bg-teal-800 text-white font-semibold py-3 rounded-xl text-xs uppercase shadow-md transition">Commit Patient</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="ehrModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" style="z-index: 9999;">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-file-medical text-teal-600 text-lg"></i>
+                    <h3 class="text-lg font-bold text-slate-900">EHR Secure Record Node</h3>
+                </div>
+                <button type="button" onclick="closeEhrModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-5">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Subject Patient Name</span>
+                    <span id="ehrPatientName" class="text-sm font-bold text-slate-900 block">Loading Node...</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Scheduled Timeline</span>
+                        <span id="ehrTime" class="text-xs font-semibold text-slate-700 block">00:00 AM</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">System Status</span>
+                        <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded border border-emerald-100 inline-block">Active Record</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Clinical Indication Details</span>
+                    <p id="ehrReason" class="text-xs text-slate-600 leading-relaxed font-medium">None</p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                <button type="button" onclick="closeEhrModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">
+                    Close Record Node
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-100/80 py-4 px-8 text-between text-[11px] text-slate-400 font-medium flex justify-between z-40">
+        <span>&copy; 2026 CarePlus Health. Encrypted with AES-256 standards.</span>
+        <span class="hidden sm:inline">HL7 Compliant Node</span>
+    </footer>
+
+    <script>
+        function openDoctorModal() {
+            document.getElementById('doctorModal').classList.remove('hidden');
+        }
+        function closeDoctorModal() {
+            document.getElementById('doctorModal').classList.add('hidden');
+        }
+        function openPatientModal() {
+            document.getElementById('patientModal').classList.remove('hidden');
+        }
+        function closePatientModal() {
+            document.getElementById('patientModal').classList.add('hidden');
+        }
+        
+        // EHR CHART OVERLAY CONTROLLER FUNCTIONS
+        function openEhrModal(name, time, reason) {
+            document.getElementById('ehrPatientName').innerText = name;
+            document.getElementById('ehrTime').innerText = time;
+            document.getElementById('ehrReason').innerText = reason;
+            document.getElementById('ehrModal').classList.remove('hidden');
+        }
+        function closeEhrModal() {
+            document.getElementById('ehrModal').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>

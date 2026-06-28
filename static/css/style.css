@@ -1,0 +1,192 @@
+/* ==========================================================================
+   CAREPLUS MEDICAL SUITE - LIGHT GRAY PREMIUM THEME (2026)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    /* Precise Clinical Color System */
+    --brand-primary: #0d9488;         /* Vivid Medical Teal */
+    --brand-primary-hover: #115e59;   /* Darker Teal for hover states */
+    --brand-primary-glow: rgba(13, 148, 136, 0.1);
+    --brand-secondary: #0f172a;       /* Deep Slate Carbon */
+    --brand-accent: #3b82f6;          /* Clean Diagnostic Blue */
+    
+    /* 🌟 Soft Light Gray Palette Overhaul */
+    --bg-main: #f1f5f9;               /* Slate-100 Light Gray Background */
+    --surface-card: #ffffff;          /* Pure White Cards (for floating contrast) */
+    --border-light: #e2e8f0;          /* Soft Gray Separators */
+    --border-medium: #cbd5e1;         /* Defined Structural Borders */
+    
+    /* Typography Visibility */
+    --text-main: #1e293b;             /* Crisp Dark Gray Text */
+    --text-muted: #64748b;            /* Subtitles & Secondary Meta Info */
+    
+    /* Animation Tokens */
+    --easing-premium: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 0.2s var(--easing-premium);
+    --transition-smooth: 0.35s var(--easing-premium);
+}
+
+/* 🌟 Global Typography & Body Setup */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--brand-secondary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* 💎 Premium Structural Navigation (Sidebar) */
+.premium-sidebar {
+    background: rgba(255, 255, 255, 0.9);
+    border-right: 1px solid var(--border-light);
+    backdrop-filter: blur(16px);
+    transition: all var(--transition-smooth);
+}
+
+/* 🧬 Next-Gen Layered Medical Floating Cards */
+.hms-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-light);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 
+                0 2px 4px -2px rgba(15, 23, 42, 0.05);
+    transition: transform var(--transition-smooth), 
+                box-shadow var(--transition-smooth), 
+                border-color var(--transition-smooth);
+    will-change: transform, box-shadow;
+}
+
+.hms-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(13, 148, 136, 0.25);
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 
+                0 8px 10px -6px rgba(15, 23, 42, 0.05);
+}
+
+/* 🩺 High-Performance Clinical Table Matrix */
+.premium-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.premium-table th {
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.premium-table td {
+    padding: 1.15rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-main);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color var(--transition-fast);
+}
+
+.premium-table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.premium-table tbody tr:hover td {
+    background-color: #f8fafc;
+    color: var(--brand-secondary);
+}
+
+/* ⚡ Biometric-Style Input Framework */
+.premium-input {
+    width: 100%;
+    padding: 0.8rem 1.1rem;
+    background-color: #f8fafc;
+    border: 1px solid var(--border-light);
+    border-radius: 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--brand-secondary);
+    transition: all var(--transition-fast);
+}
+
+.premium-input::placeholder {
+    color: #94a3b8;
+}
+
+.premium-input:focus {
+    background-color: #ffffff;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 4px var(--brand-primary-glow);
+    outline: none;
+}
+
+/* 🏷️ Anti-Aliased Micro Status Badges */
+.status-pill {
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.725rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.status-pill-teal { 
+    background: #e6f4f1; 
+    color: #0f766e; 
+    border: 1px solid #ccfbf1; 
+}
+
+.status-pill-purple { 
+    background: #f3e8ff; 
+    color: #6b21a8; 
+    border: 1px solid #e9d5ff; 
+}
+
+.status-pill-amber { 
+    background: #fef3c7; 
+    color: #92400e; 
+    border: 1px solid #fde68a; 
+}
+
+/* 🛠️ Tactical Functional Button System */
+.btn-primary {
+    background: var(--brand-primary);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.6rem;
+    border-radius: 0.85rem;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.15);
+}
+
+.btn-primary:hover {
+    background: var(--brand-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(13, 148, 136, 0.25);
+}
+
+/* Smooth Premium Scrollbar Blueprint */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
